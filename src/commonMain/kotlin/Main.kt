@@ -1,10 +1,16 @@
-import com.myunidays.segmenkt.WriteKey
+import com.myunidays.segmenkt.*
 
-val segmentConfig = com.myunidays.segmenkt.Configuration(
-    writeKey = WriteKey(
-        android = "123",
-        ios = "222"
-    ),
-    context = null
-)
-val segment = com.myunidays.segmenkt.setupWithConfiguration(segmentConfig)
+fun main() {
+    val segmentConfig = Configuration(
+        writeKey = WriteKey(
+            android = "123",
+            ios = "222"
+        ),
+        context = null
+    )
+    Analytics.setupWithConfiguration(segmentConfig)
+    Analytics.shared().track("Cool Event")
+    Analytics.shared().identify("1")
+    Analytics.shared().group("1")
+    Analytics.shared().screen("Cool Screen")
+}

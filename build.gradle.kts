@@ -1,9 +1,12 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
+
 plugins {
-    kotlin("multiplatform") version "1.6.10"
+    kotlin("multiplatform") version "1.6.0"
     id("com.android.library") version "7.1.0"
+    kotlin("native.cocoapods") version "1.6.0"
 }
 
-group = "me.andrewreed"
+group = "com.myunidays"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -12,12 +15,21 @@ repositories {
     mavenLocal()
 }
 
+val frameworkName = "SegmentExample"
+
 kotlin {
+    val xcf = XCFramework(frameworkName)
     iosSimulatorArm64 {
-        binaries.framework("library")
+        binaries.framework {
+            baseName = frameworkName
+            xcf.add(this)
+        }
     }
     iosArm64("ios") {
-        binaries.framework("library")
+        binaries.framework {
+            baseName = frameworkName
+            xcf.add(this)
+        }
     }
     android {
         publishAllLibraryVariants()
@@ -28,23 +40,24 @@ kotlin {
                 implementation("com.myunidays:segmenkt:0.0.1")
             }
         }
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
-            }
-        }
         val iosMain by getting
         val iosSimulatorArm64Main by getting
         iosSimulatorArm64Main.dependsOn(iosMain)
-
-        val iosTest by getting
-        val iosSimulatorArm64Test by getting
-        iosSimulatorArm64Test.dependsOn(iosTest)
-
         val androidMain by getting
-        val androidTest by getting {
-            dependencies {
-                implementation("junit:junit:4.13")
+    }
+}
+
+kotlin {
+    cocoapods {
+        ios.deploymentTarget = "10.0"
+        summary = "Some description for a Kotlin/Native module"
+        homepage = "Link to a Kotlin/Native module homepage"
+        framework {  }
+        pod("Analytics") {
+            version = "~> 4.1.6"
+            moduleName = "Segment"
+            source = git("https://github.com/Reedyuk/analytics-ios.git") {
+                branch = "master"
             }
         }
     }
